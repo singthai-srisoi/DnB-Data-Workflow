@@ -1,0 +1,11 @@
+[[pages]]
+path = "streamlit/monthly_supplier_report.py"
+name = "Monthly Supplier Report"
+icon = "📃"
+
+[[pages]]
+path = "streamlit/purchase_inv_data_migration.py"
+name = "Purchase Invoice Data Migration"
+icon = "📃"
+
+
