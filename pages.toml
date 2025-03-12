@@ -8,4 +8,8 @@ path = "streamlit/purchase_inv_data_migration.py"
 name = "Purchase Invoice Data Migration"
 icon = "📃"
 
+[[pages]]
+path = "streamlit/customer_import.py"
+name = "Customer Import"
+icon = "🙎‍♂️"
 
