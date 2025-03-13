@@ -1,5 +1,5 @@
 from database import get_db_session
-from models.customer import Customer
+from models import Supplier
 import polars as pl
 import streamlit as st
 import fastexcel as fex
@@ -15,7 +15,7 @@ st.session_state.clear()
 def get_data_db():
     session = next(get_db_session())  # Get a session
     try:
-        query = session.query(Customer).all()  # Fetch all results
+        query = session.query(Supplier).all()  # Fetch all results
         if not query:
             print("No data found.")
             return
@@ -30,7 +30,7 @@ def get_data_db():
     finally:
         session.close()  # Always close the session
 
-def pre_import_data_db(file: bytes, sheet_name: str = 'Maintain Customer') -> tuple[List[Customer], pl.DataFrame, pl.DataFrame]:
+def pre_import_data_db(file: bytes, sheet_name: str = 'Maintain Supplier') -> tuple[List[Supplier], pl.DataFrame, pl.DataFrame]:
     session = next(get_db_session())
     df = pl.read_excel(file, sheet_name=sheet_name)
     rename_map = {
@@ -50,20 +50,20 @@ def pre_import_data_db(file: bytes, sheet_name: str = 'Maintain Customer') -> tu
     # columns not int rename
     drop_column = [col for col in df.columns if col not in rename_map.keys()]
     df = df.drop(drop_column).rename(rename_map).drop_nulls(subset=['code', 'company_name'])
-    customer_list: List[Customer] = []
-    customer_upload: List[Dict[str, Any]] = []
+    supplier_list: List[Supplier] = []
+    supplier_upload: List[Dict[str, Any]] = []
     
     for row in df.to_dicts():
-        check_exist = session.query(Customer).filter(Customer.code == row.get('code')).first()
+        check_exist = session.query(Supplier).filter(Supplier.code == row.get('code')).first()
         if check_exist:
             continue
-        customer = Customer(**row)
-        customer_list.append(customer)
-        customer_upload.append(row)
-    customer_upload_df = pl.DataFrame(customer_upload)
-    return (customer_list, customer_upload_df, df)
+        supplier = Supplier(**row)
+        supplier_list.append(supplier)
+        supplier_upload.append(row)
+    supplier_upload_df = pl.DataFrame(supplier_upload)
+    return (supplier_list, supplier_upload_df, df)
 
-def import_data_db(data: List[Customer]):
+def import_data_db(data: List[Supplier]):
     session = next(get_db_session())
     try:
         session.add_all(data)
@@ -73,7 +73,7 @@ def import_data_db(data: List[Customer]):
         session.close()
 
 
-st.title("Customer Import")
+st.title("Supplier Import")
 st.header("Data from Database")
 df = get_data_db()
 
@@ -89,7 +89,7 @@ else:
 # <hr />
 st.divider()
 st.header("Upload File")
-st.write("Upload a file to import customer data.")
+st.write("Upload a file to import supplier data.")
 data_file = st.file_uploader("Upload a file", type=["xlsx"])
 
 if "sheets_name" not in st.session_state:

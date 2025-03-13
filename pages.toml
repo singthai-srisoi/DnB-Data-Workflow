@@ -1,15 +1,34 @@
 [[pages]]
+name = "Data"
+icon = "💾"
+is_section = true
+
+[[pages]]
+path = "streamlit/customer_import.py"
+name = "Customer Import"
+icon = "👦"
+
+[[pages]]
+path = "streamlit/supplier_import.py"
+name = "Supplier Import"
+icon = "👧"
+
+[[pages]]
+name = "Reports"
+icon = "📝"
+is_section = true
+
+[[pages]]
 path = "streamlit/monthly_supplier_report.py"
 name = "Monthly Supplier Report"
 icon = "📃"
 
 [[pages]]
-path = "streamlit/purchase_inv_data_migration.py"
-name = "Purchase Invoice Data Migration"
-icon = "📃"
+name = "Migration"
+icon = "🏃‍♂️‍➡️"
+is_section = true
 
 [[pages]]
-path = "streamlit/customer_import.py"
-name = "Customer Import"
-icon = "🙎‍♂️"
-
+path = "streamlit/purchase_inv_data_migration.py"
+name = "Purchase Invoice Data Migration"
+icon = "💼"
