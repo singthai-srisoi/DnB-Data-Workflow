@@ -76,13 +76,13 @@ def import_data_db(data: List[Supplier]):
 st.title("Supplier Import")
 st.header("Data from Database")
 df = get_data_db()
-
+data_db = None
 if "df" not in st.session_state:
     st.session_state.df = get_data_db()
 if st.button("Refresh"):
     st.session_state.df = get_data_db()
 if st.session_state.df is not None:
-    st.dataframe(st.session_state.df)
+    data_db = st.dataframe(st.session_state.df)
 else:
     st.write("No data found.")
 
@@ -118,4 +118,5 @@ if st.session_state.pre_upload_data is not None:
             st.session_state.pre_upload_data = None
             st.session_state.sheets_name = None
             st.session_state.df = get_data_db()
+            data_db = st.dataframe(st.session_state.df)
             st.write("Data imported successfully.")
