@@ -1,4 +1,15 @@
 [[pages]]
+name = "Test"
+icon = "🧪"
+is_section = true
+
+[[pages]]
+name = "Fragment"
+icon = "🧪"
+path = "streamlit/frag.py"
+
+
+[[pages]]
 name = "Data"
 icon = "💾"
 is_section = true
