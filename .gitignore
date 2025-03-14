@@ -1,3 +1,5 @@
 /venv
 config.toml
 database.db
+
+/__pycache__
