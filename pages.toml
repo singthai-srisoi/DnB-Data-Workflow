@@ -43,3 +43,8 @@ is_section = true
 path = "streamlit/purchase_inv_data_migration.py"
 name = "Purchase Invoice Data Migration"
 icon = "💼"
+
+[[pages]]
+path = "streamlit/contra.py"
+name = "Make Contra"
+icon = "💼"
