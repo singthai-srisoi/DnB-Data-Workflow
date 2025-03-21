@@ -3,3 +3,5 @@ config.toml
 database.db
 
 /__pycache__
+private.pem
+certificate.pem
