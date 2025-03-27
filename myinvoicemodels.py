@@ -116,15 +116,22 @@ class PartyLegalEntity_(BaseModel):
 
 class Contact_(BaseModel):
     Telephone: List[ValueStr_]
-    ElectronicMail: List[ValueStr_]
+    ElectronicMail: List[ValueStr_] = None
 
-
-class Party_(BaseModel):
-    AdditionalAccountID: List[AdditionalAccountID_]
+class IndustryClassificationCode_(ValueStr_):
+    name: str
+    
+class PartyDetails_(BaseModel):
+    IndustryClassificationCode: List[IndustryClassificationCode_] = None # Mandatory for Seller, Optional for Buyer
     PostalAddress: List[PostalAddress_]
     PartyIdentification: List[PartyIdentification_]
     PartyLegalEntity: List[PartyLegalEntity_]
     Contact: List[Contact_]
+    
+
+class Party_(BaseModel):
+    AdditionalAccountID: List[AdditionalAccountID_] = None
+    Party: List[PartyDetails_]
 
 #endregion
 
@@ -330,80 +337,78 @@ class Invoice(BaseModel):
     DocumentCurrencyCode: List[DocumentCurrencyCode_]
     TaxCurrencyCode: List[TaxCurrencyCode_] # Currency of tax
     InvoicePeriod: List[InvoicePeriod_] # Period of invoice
-    OrderReference: List[ValueStr_] # Order ID
     AccountingSupplierParty: List[Party_] # Seller
     AccountingCustomerParty: List[Party_] # Buyer
-    PaymentMeans: List[PaymentMeans_]
-    PaymentTerms: List[PaymentTerms_] # Payment terms
+    PaymentMeans: List[PaymentMeans_] = None # Payment mode
+    PaymentTerms: List[PaymentTerms_] = None # Payment terms
     TaxTotal: List[TaxTotal_] # Total tax
     LegalMonetaryTotal: List[LegalMonetaryTotal_] # Total amount
     InvoiceLine: List[InvoiceLine_] # Line items
 
-
-#example create in invoice
-inv001 = Invoice(
-    ID=[ValueStr_(_="INV001")],
-    IssueDate=[ValueDate_(_=datetime.date.today())],
-    IssueTime=[ValueTime_(_=datetime.datetime.now().time())],
-    InvoiceTypeCode=[InvoiceTypeCode_()],
-    DocumentCurrencyCode=[DocumentCurrencyCode_()],
-    TaxCurrencyCode=[TaxCurrencyCode_()],
-    InvoicePeriod=[InvoicePeriod_(
-        StartDate=[ValueDate_(_=datetime.date.today())],
-        EndDate=[ValueDate_(_=datetime.date.today())],
-        Description=[ValueStr_(_="Invoice Period")]
-    )],
-    OrderReference=[ValueStr_(_="ORD001")],
-    AccountingSupplierParty=[Party_(
-        AdditionalAccountID=[AdditionalAccountID_(_="123456")],
-        PostalAddress=[PostalAddress_(
-            CityName=[ValueStr_(_="Kuala Lumpur")],
-            PostalZone=[ValueStr_(_="50450")],
-            CountrySubentityCode=[ValueStr_(_="Wilayah Persekutuan")],
-            AddressLine=[AddressLine_(Line=[ValueStr_(_="No 1, Jalan 1/1")])],
-            Country=[Country_(IdentificationCode=[IdentificationCode_(_="MYS")])]
+if __name__ == "__main__":
+    #example create in invoice
+    inv001 = Invoice(
+        ID=[ValueStr_(_="INV001")],
+        IssueDate=[ValueDate_(_=datetime.date.today())],
+        IssueTime=[ValueTime_(_=datetime.datetime.now().time())],
+        InvoiceTypeCode=[InvoiceTypeCode_()],
+        DocumentCurrencyCode=[DocumentCurrencyCode_()],
+        TaxCurrencyCode=[TaxCurrencyCode_()],
+        InvoicePeriod=[InvoicePeriod_(
+            StartDate=[ValueDate_(_=datetime.date.today())],
+            EndDate=[ValueDate_(_=datetime.date.today())],
+            Description=[ValueStr_(_="Invoice Period")]
         )],
-        PartyIdentification=[PartyIdentification_(
-            ID=[PartyIdentificationDetails_(_="123456", schemeID="MYID")]
+        AccountingSupplierParty=[Party_(
+            AdditionalAccountID=[AdditionalAccountID_(_="123456")],
+            PostalAddress=[PostalAddress_(
+                CityName=[ValueStr_(_="Kuala Lumpur")],
+                PostalZone=[ValueStr_(_="50450")],
+                CountrySubentityCode=[ValueStr_(_="Wilayah Persekutuan")],
+                AddressLine=[AddressLine_(Line=[ValueStr_(_="No 1, Jalan 1/1")])],
+                Country=[Country_(IdentificationCode=[IdentificationCode_(_="MYS")])]
+            )],
+            PartyIdentification=[PartyIdentification_(
+                ID=[PartyIdentificationDetails_(_="123456", schemeID="MYID")]
+            )],
+            PartyLegalEntity=[PartyLegalEntity_(RegistrationName=[ValueStr_(_="Company ABC")])],
+            Contact=[Contact_(
+                Telephone=[ValueStr_(_="0123456789")],
+                ElectronicMail=[ValueStr_(_="")] # email
+            )],
         )],
-        PartyLegalEntity=[PartyLegalEntity_(RegistrationName=[ValueStr_(_="Company ABC")])],
-        Contact=[Contact_(
-            Telephone=[ValueStr_(_="0123456789")],
-            ElectronicMail=[ValueStr_(_="")] # email
+        AccountingCustomerParty=[Party_(
+            AdditionalAccountID=[AdditionalAccountID_(_="654321")],
+            PostalAddress=[PostalAddress_(
+                CityName=[ValueStr_(_="Petaling Jaya")],
+                PostalZone=[ValueStr_(_="47810")],
+                CountrySubentityCode=[ValueStr_(_="Selangor")],
+                AddressLine=[AddressLine_(Line=[ValueStr_(_="No 2, Jalan 2/2")])],
+                Country=[Country_(IdentificationCode=[IdentificationCode_(_="MYS")])]
+            )],
+            PartyIdentification=[PartyIdentification_(
+                ID=[PartyIdentificationDetails_(_="654321", schemeID="MYID")]
+            )],
+            PartyLegalEntity=[PartyLegalEntity_(RegistrationName=[ValueStr_(_="Company XYZ")])],
+            Contact=[Contact_(
+                Telephone=[ValueStr_(_="0123456789")],
+                ElectronicMail=[ValueStr_(_="")] # email
+            )],
         )],
-    )],
-    AccountingCustomerParty=[Party_(
-        AdditionalAccountID=[AdditionalAccountID_(_="654321")],
-        PostalAddress=[PostalAddress_(
-            CityName=[ValueStr_(_="Petaling Jaya")],
-            PostalZone=[ValueStr_(_="47810")],
-            CountrySubentityCode=[ValueStr_(_="Selangor")],
-            AddressLine=[AddressLine_(Line=[ValueStr_(_="No 2, Jalan 2/2")])],
-            Country=[Country_(IdentificationCode=[IdentificationCode_(_="MYS")])]
-        )],
-        PartyIdentification=[PartyIdentification_(
-            ID=[PartyIdentificationDetails_(_="654321", schemeID="MYID")]
-        )],
-        PartyLegalEntity=[PartyLegalEntity_(RegistrationName=[ValueStr_(_="Company XYZ")])],
-        Contact=[Contact_(
-            Telephone=[ValueStr_(_="0123456789")],
-            ElectronicMail=[ValueStr_(_="")] # email
-        )],
-    )],
-    PaymentMeans=[PaymentMeans_(PaymentMeansCode=[ValueStr_(_=PaymentModeCode.Cash.value)])],
-    PaymentTerms=[PaymentTerms_(Note=[ValueStr_(_="Payment terms")])],
-    TaxTotal=[TaxTotal_(TaxAmount=[TaxAmount_(_=0.0)], TaxSubtotal=[TaxSubtotal_(TaxableAmount=[TaxAmount_(_=0.0)], TaxAmount=[TaxAmount_(_=0.0)], TaxCategory=[TaxCategory_(ID=[ValueStr_(_=TaxTypeCode.NotApplicable.value)], TaxScheme=[TaxScheme_(ID=[TaxSchemeID_(_="MYGST")])])])])],
-    LegalMonetaryTotal=[LegalMonetaryTotal_(TaxExclusiveAmount=[TaxAmount_(_=0.0)], TaxInclusiveAmount=[TaxAmount_(_=0.0)], PayableAmount=[TaxAmount_(_=0.0)])],
-    InvoiceLine=[InvoiceLine_(
-        ID=[ValueInt_(_=1)],
-        Item=[Item_(CommodityClassification=[CommodityClassification_(ItemClassificationCode=[ItemClassificationCode_(_=ItemClassificationCode.Others.value)])], Description=[ValueStr_(_="Item 1")])],
-        Price=[Price_(PriceAmount=[Currency_(_=100.0)])],
-        InvoicedQuantity=[InvoicedQuantity_(_=1.0)],
+        PaymentMeans=[PaymentMeans_(PaymentMeansCode=[ValueStr_(_=PaymentModeCode.Cash.value)])],
+        PaymentTerms=[PaymentTerms_(Note=[ValueStr_(_="Payment terms")])],
         TaxTotal=[TaxTotal_(TaxAmount=[TaxAmount_(_=0.0)], TaxSubtotal=[TaxSubtotal_(TaxableAmount=[TaxAmount_(_=0.0)], TaxAmount=[TaxAmount_(_=0.0)], TaxCategory=[TaxCategory_(ID=[ValueStr_(_=TaxTypeCode.NotApplicable.value)], TaxScheme=[TaxScheme_(ID=[TaxSchemeID_(_="MYGST")])])])])],
-        ItemPriceExtension=[ItemPriceExtension_(Amount=[Currency_(_=100.0)])],
-        LineExtensionAmount=[Currency_(_=100.0)]
-    )]        
-)
+        LegalMonetaryTotal=[LegalMonetaryTotal_(TaxExclusiveAmount=[TaxAmount_(_=0.0)], TaxInclusiveAmount=[TaxAmount_(_=0.0)], PayableAmount=[TaxAmount_(_=0.0)])],
+        InvoiceLine=[InvoiceLine_(
+            ID=[ValueInt_(_=1)],
+            Item=[Item_(CommodityClassification=[CommodityClassification_(ItemClassificationCode=[ItemClassificationCode_(_=ItemClassificationCode.Others.value)])], Description=[ValueStr_(_="Item 1")])],
+            Price=[Price_(PriceAmount=[Currency_(_=100.0)])],
+            InvoicedQuantity=[InvoicedQuantity_(_=1.0)],
+            TaxTotal=[TaxTotal_(TaxAmount=[TaxAmount_(_=0.0)], TaxSubtotal=[TaxSubtotal_(TaxableAmount=[TaxAmount_(_=0.0)], TaxAmount=[TaxAmount_(_=0.0)], TaxCategory=[TaxCategory_(ID=[ValueStr_(_=TaxTypeCode.NotApplicable.value)], TaxScheme=[TaxScheme_(ID=[TaxSchemeID_(_="MYGST")])])])])],
+            ItemPriceExtension=[ItemPriceExtension_(Amount=[Currency_(_=100.0)])],
+            LineExtensionAmount=[Currency_(_=100.0)]
+        )]        
+    )
 
-from pprint import pprint
-pprint(inv001.model_dump(mode="json", by_alias=True, exclude_none=True))
+    from pprint import pprint
+    pprint(inv001.model_dump(mode="json", by_alias=True, exclude_none=True))

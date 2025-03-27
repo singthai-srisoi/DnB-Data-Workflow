@@ -6,6 +6,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography import x509
 from cryptography.x509 import Certificate
 import datetime
+import hashlib
 
 
 class SignService:
