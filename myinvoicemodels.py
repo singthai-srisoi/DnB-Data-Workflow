@@ -167,25 +167,26 @@ class TaxTypeCode(str, Enum):
 class TaxAmount_(ValueFloat_):
     currencyID: str = "MYR"
 
-class TaxSchemeID_(ValueStr_):
-    value: str = Field(default="MYGST", alias="_")
-    schemeID: str = "MYGST"
-    schemeAgencyID: str = "MY"
+class TaxSchemeID_(BaseModel):
+    value: str = Field(default="OTH", alias="_")
+    schemeID: str = "UN/ECE 5153"
+    schemeAgencyID: str = "6"
 class TaxScheme_(BaseModel):
-    ID: List[TaxSchemeID_]
+    ID: List[TaxSchemeID_] = [TaxSchemeID_()]
 class TaxCategory_(BaseModel):
     ID: List[ValueStr_]
-    TaxScheme: List[TaxScheme_]
+    TaxScheme: List[TaxScheme_] = [TaxScheme_()]
 
     
 class TaxSubtotal_(BaseModel):
     TaxableAmount: List[TaxAmount_]
     TaxAmount: List[TaxAmount_]
+    Percent: List[ValueInt_] = None
     TaxCategory: List[TaxCategory_]
 
 class TaxTotal_(BaseModel):
     TaxAmount: List[TaxAmount_]
-    TaxSubtotal: List[TaxSubtotal_]
+    TaxSubtotal: List[TaxSubtotal_] = None
 
 
 
