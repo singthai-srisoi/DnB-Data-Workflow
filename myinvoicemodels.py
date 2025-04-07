@@ -321,7 +321,7 @@ class ItemPriceExtension_(BaseModel):
     Amount: List[Currency_]
 
 class InvoiceLine_(BaseModel):
-    ID: List[ValueInt_] # ID of the line item
+    ID: List[ValueStr_] # ID of the line item
     Item: List[Item_] # Item classification code and description
     Price: List[Price_] # Price of the item
     InvoicedQuantity: List[InvoicedQuantity_] # Quantity of the item

@@ -44,7 +44,7 @@ class SignService:
             "SignedProperties":[{
                 "Id":"id-xades-signed props",
                 "SignedSignatureProperties":[{
-                    "SigningTime":[{"_":datetime.datetime.now(datetime.timezone.utc).isoformat()}],
+                    "SigningTime":[{"_":datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}],
                     "SigningCertificate":[{
                         "Cert":[{
                             "CertDigest":[{
@@ -52,7 +52,7 @@ class SignService:
                                 "DigestValue":[{"_":self.digest_cert()}]}],
                             "IssuerSerial":[{
                                 "X509IssuerName":[{"_":self.cert.issuer.rfc4514_string()}],
-                                "X509SerialNumber":[{"_":self.cert.serial_number}]
+                                "X509SerialNumber":[{"_":str(self.cert.serial_number)}]
                             }]
                         }]
                     }]
@@ -86,7 +86,7 @@ class SignService:
                                                 "Id": "id-xades-signed-props",
                                                 "SignedSignatureProperties": [{
                                                     # * Assign UTC timestamp
-                                                    "SigningTime": [{"_": datetime.datetime.now(datetime.timezone.utc).isoformat()}],
+                                                    "SigningTime": [{"_": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}],
                                                     "SigningCertificate": [{
                                                         "Cert": [{
                                                             "CertDigest": [{
@@ -100,7 +100,7 @@ class SignService:
                                                             "IssuerSerial": [{
                                                                 # * Assign Issuer Name and Serial Number
                                                                 "X509IssuerName": [{"_": self.cert.issuer.rfc4514_string()}],
-                                                                "X509SerialNumber": [{"_": self.cert.serial_number}]
+                                                                "X509SerialNumber": [{"_": str(self.cert.serial_number)}]
                                                             }]
                                                         }]
                                                     }]
@@ -122,7 +122,7 @@ class SignService:
                                             "X509IssuerSerial": [{
                                                 "X509IssuerName": [{"_": self.cert.issuer.rfc4514_string()}],
                                                 "X509SerialNumber": [{
-                                                    "_": self.cert.serial_number
+                                                    "_": str(self.cert.serial_number)
                                                 }]
                                             }]
                                         }]
@@ -174,19 +174,19 @@ class SignService:
         return self.sign
 
 
-with open("invoice.json", "r") as f:
-    invoice_data = json.load(f)
+# with open("invoice.json", "r") as f:
+#     invoice_data = json.load(f)
     
-with open("private.pem", "rb") as f:
-    private_key = serialization.load_pem_private_key(
-        f.read(),
-        password=None
-    )
+# with open("private.pem", "rb") as f:
+#     private_key = serialization.load_pem_private_key(
+#         f.read(),
+#         password=None
+#     )
 
-with open("certificate.pem", "r") as f:
-    cert_str = f.read()
-    cert = x509.load_pem_x509_certificate(cert_str.encode())
+# with open("certificate.pem", "r") as f:
+#     cert_str = f.read()
+#     cert = x509.load_pem_x509_certificate(cert_str.encode())
     
-sign_service = SignService(invoice_data, private_key, cert)
-sign_service.gen_sign()
+# sign_service = SignService(invoice_data, private_key, cert)
+# sign_service.gen_sign()
 
