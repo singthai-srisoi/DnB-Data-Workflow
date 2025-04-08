@@ -35,14 +35,14 @@ class SignService:
         return base64.b64encode(signature).decode('utf-8')
     
     def digest_cert(self) -> str:
-        hash_obj = hashlib.sha256(self.cert.public_bytes(encoding=serialization.Encoding.PEM)).digest()
+        hash_obj = hashlib.sha256(self.cert.public_bytes(encoding=serialization.Encoding.DER)).digest()
         return base64.b64encode(hash_obj).decode('utf-8')
 
     def gen_sign_props(self) -> dict:
         self.sign_props = {
             "Target":"signature",
             "SignedProperties":[{
-                "Id":"id-xades-signed props",
+                "Id":"id-xades-signed-props",
                 "SignedSignatureProperties":[{
                     "SigningTime":[{"_":datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}],
                     "SigningCertificate":[{
@@ -99,6 +99,7 @@ class SignService:
                                                             }],
                                                             "IssuerSerial": [{
                                                                 # * Assign Issuer Name and Serial Number
+                                                                # self.cert.issuer.rfc4514_string()
                                                                 "X509IssuerName": [{"_": self.cert.issuer.rfc4514_string()}],
                                                                 "X509SerialNumber": [{"_": str(self.cert.serial_number)}]
                                                             }]
