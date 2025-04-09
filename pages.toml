@@ -48,3 +48,8 @@ icon = "💼"
 path = "streamlit/contra.py"
 name = "Make Contra"
 icon = "💼"
+
+[[pages]]
+path = "streamlit/invoices_sql.py"
+name = "Make Purchase/Sales Invoices"
+icon = "💼"

@@ -1,5 +1,5 @@
 import streamlit as st
-from sqlacc import SQLUtils, initialize_com
+from services.sqlacc import SQLUtils, initialize_com
 import polars as pl
 import datetime
 from typing import Any
