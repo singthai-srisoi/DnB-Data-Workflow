@@ -120,7 +120,7 @@ def post_sqlacc():
         ComServer = win32com.client.Dispatch("SQLAcc.BizApp")
         
         
-        # reigion: Post Purchase Invoice
+        # reigion Post Purchase Invoice
         st.text("Posting Purchase Invoice to SQLAcc")
         pur_grouped: pl.DataFrame = st.session_state.pur_grouped
         unique_docno = pur_grouped["DocNo"].unique()
@@ -129,14 +129,14 @@ def post_sqlacc():
         # iterate through each docno and post to sqlacc
         for docno in unique_docno:
             group = pur_grouped.filter(pl.col("DocNo") == docno)
-            invoice = SL_IV(
+            invoice = PH_PI(
                 DocNo = docno,
                 DocDate = group["DocDate"].first(),
                 Code = group["Code"].first(),
             )
             details = []
             for row in group.iter_rows(named=True):
-                detail = SL_IV_Detail(
+                detail = PH_PI_Detail(
                     Seq = row["Seq"],
                     Account = row["Account"],
                     Remark1 = row["Remark1"],

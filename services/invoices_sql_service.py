@@ -274,9 +274,18 @@ class SL_IV(BaseModel):
             print(f"Posting {self.DocNo} Done")
         except Exception as e:
             print("Oops!", e)
+            raise e
         BizObject.Close()
         
-class PH_PI_Detail(SL_IV_Detail):
+class PH_PI_Detail(BaseModel):
+    Seq: int
+    Account: str
+    Remark1: str
+    ItemCode: str
+    Qty: float
+    UnitPrice: float
+    Amount: float = 0.0
+    
     def set_field(self, lDetail):
         lDetail.Append()
         lDetail.FindField("Seq").value = self.Seq
@@ -287,13 +296,20 @@ class PH_PI_Detail(SL_IV_Detail):
         lDetail.FindField("Amount").AsFloat = self.Amount
         lDetail.FindField("Remark1").AsString = self.Remark1
         lDetail.Post()
-
-class PH_PI(SL_IV):
+        
+class PH_PI(BaseModel):
+    DocNo: str
+    DocDate: str
+    Code: str
+    Description: str = ""
+    
+    cdsDocDetail: List[PH_PI_Detail] = []
+    
     def set_field(self, lMain, post_date: str = datetime.datetime.now().strftime('%d/%m/%Y')):
         lMain.FindField("DocNo").AsString = self.DocNo
         lMain.FindField("DocDate").value = self.DocDate
         lMain.FindField("PostDate").value = post_date
-        lMain.FindField("Code").AsString = self.Code
+        lMain.FindField("Code").AsString = self.Code.strip()
         lMain.FindField("Description").AsString = self.Description
         
     def post(self, ComServer: CDispatch):
@@ -317,4 +333,5 @@ class PH_PI(SL_IV):
             print(f"Posting {self.DocNo} Done")
         except Exception as e:
             print("Oops!", e)
+            raise e
         BizObject.Close()
