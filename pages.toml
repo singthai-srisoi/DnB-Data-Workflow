@@ -45,7 +45,7 @@ name = "Purchase Invoice Data Migration"
 icon = "💼"
 
 [[pages]]
-path = "streamlit/contra.py"
+path = "streamlit/contra_sql.py"
 name = "Make Contra"
 icon = "💼"
 

@@ -111,15 +111,9 @@ def set_index_max():
 
 
 def post_sqlacc():
-    import win32com.client
-    import pythoncom
-    
-    pythoncom.CoInitialize()  # Initialize COM in this thread
-    
+    from sqlacc import get_comserver
     try:
-        ComServer = win32com.client.Dispatch("SQLAcc.BizApp")
-        
-        
+        ComServer = get_comserver()
         # reigion Post Purchase Invoice
         st.text("Posting Purchase Invoice to SQLAcc")
         pur_grouped: pl.DataFrame = st.session_state.pur_grouped

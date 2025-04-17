@@ -8,4 +8,5 @@ class Setting(Base):
 
     purchase_index: Mapped[int] = mapped_column()
     sales_index: Mapped[int] = mapped_column()
+    contra_index: Mapped[int] = mapped_column(nullable=True, default=None)
 
