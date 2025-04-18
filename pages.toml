@@ -1,12 +1,12 @@
-[[pages]]
-name = "Test"
-icon = "🧪"
-is_section = true
+# [[pages]]
+# name = "Test"
+# icon = "🧪"
+# is_section = true
 
-[[pages]]
-name = "Fragment"
-icon = "🧪"
-path = "streamlit/frag.py"
+# [[pages]]
+# name = "Fragment"
+# icon = "🧪"
+# path = "streamlit/frag.py"
 
 
 [[pages]]
@@ -39,10 +39,10 @@ name = "Migration"
 icon = "🏃‍♂️‍➡️"
 is_section = true
 
-[[pages]]
-path = "streamlit/purchase_inv_data_migration.py"
-name = "Purchase Invoice Data Migration"
-icon = "💼"
+# [[pages]]
+# path = "streamlit/purchase_inv_data_migration.py"
+# name = "Purchase Invoice Data Migration"
+# icon = "💼"
 
 [[pages]]
 path = "streamlit/contra_sql.py"
