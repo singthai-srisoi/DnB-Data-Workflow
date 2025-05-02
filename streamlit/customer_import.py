@@ -6,6 +6,7 @@ import fastexcel as fex
 import polars as pl
 from typing import List, Dict, Any
 
+# TODO: Add function to import from sqlaccounting
 # reset session state
 st.session_state.clear()
 
