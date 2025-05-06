@@ -14,15 +14,25 @@ name = "Data"
 icon = "💾"
 is_section = true
 
+# [[pages]]
+# path = "streamlit/customer_import.py"
+# name = "Customer Import"
+# icon = "👦"
+
+# [[pages]]
+# path = "streamlit/supplier_import.py"
+# name = "Supplier Import"
+# icon = "👧"
+
 [[pages]]
-path = "streamlit/customer_import.py"
+path = "streamlit/import_customer2.py"
 name = "Customer Import"
 icon = "👦"
 
 [[pages]]
-path = "streamlit/supplier_import.py"
+path = "streamlit/import_supplier2.py"
 name = "Supplier Import"
-icon = "👧"
+icon = "👦"
 
 [[pages]]
 name = "Reports"
