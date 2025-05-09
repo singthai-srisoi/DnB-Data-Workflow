@@ -147,8 +147,8 @@ def post_sqlacc(progress=None, log: Callable[[str], None] = None):
             invoice.cdsDocDetail = details
             try:
                 # debug, bypass the post to sqlacc
-                # invoice.post(ComServer)
-                time.sleep(1)  # simulate posting time
+                invoice.post(ComServer)
+                # time.sleep(1)  # simulate posting time
                 if log:
                     log(f"Posted {docno} to SQLAcc")
                 else:
@@ -190,9 +190,9 @@ def post_sqlacc(progress=None, log: Callable[[str], None] = None):
                 details.append(detail)
             invoice.cdsDocDetail = details
             try:
-                # invoice.post(ComServer)
+                invoice.post(ComServer)
                 # debug, bypass the post to sqlacc
-                time.sleep(1)  # simulate posting time
+                # time.sleep(1)  # simulate posting time
                 if log:
                     log(f"Posted {docno} to SQLAcc")
                 else:
