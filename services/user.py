@@ -49,7 +49,7 @@ class UserService:
         sqlacc = cls.get_code_from_sqlacc(ComServer, model)
         
         # Compare the two lists and return the differences
-        return list(set(db) - set(sqlacc))
+        return list(set(sqlacc) - set(db))
     
     @classmethod
     def insert_unimported(cls, session: Session, ComServer: CDispatch, model: Literal['AP_SUPPLIER', 'AR_CUSTOMER']):
