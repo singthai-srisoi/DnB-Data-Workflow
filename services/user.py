@@ -22,7 +22,7 @@ class UserModel(BaseModel):
     id_no: str | None = Field(default=None, alias="IDNO")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SupplierModel(UserModel):
     ...
@@ -54,48 +54,44 @@ class UserService:
     @classmethod
     def insert_unimported(cls, session: Session, ComServer: CDispatch, model: Literal['AP_SUPPLIER', 'AR_CUSTOMER']):
         # Get the list of suppliers from SQLAcc
-        sqlacc = cls.get_code_from_sqlacc(ComServer, model)
+        # sqlacc = cls.get_code_from_sqlacc(ComServer, model)
         
-        # Get the list of suppliers from the database
-        db_model = Supplier if model == 'AP_SUPPLIER' else Customer
-        db = cls.get_code_from_db(session, db_model)
+        # # Get the list of suppliers from the database
+        # db_model = Supplier if model == 'AP_SUPPLIER' else Customer
+        # db = cls.get_code_from_db(session, db_model)
         
         # Find suppliers that are in SQLAcc but not in the database
-        unimported = set(sqlacc) - set(db)
-        
-        # Insert unimported suppliers into the database
-        for code in unimported:
-            lSQL = f"""SELECT
+        unimported = cls.compare(session, ComServer, model)
+        lSQL = f"""SELECT
                     A.CODE, A.CONTROLACCOUNT, A.COMPANYNAME, A.COMPANYNAME2,
                     B.ADDRESS1, B.ADDRESS2, B.ADDRESS3, B.POSTCODE,
                     A.TIN, A.IDTYPE, A.IDNO
                 FROM {model} A
                 INNER JOIN {model}BRANCH B ON (A.CODE=B.CODE)
-                WHERE A.CODE = '{code}'
+                WHERE A.CODE IN ({','.join([f"'{code}'" for code in unimported])});
                 """
-            lDataSet = ComServer.DBManager.NewDataSet(lSQL)
-            binded = ComServerService.GetResult(lDataSet)
-            
-            if binded:
-                # data = SupplierModel(**binded[0])
-                # new_supplier = Supplier(
-                #     data.model_dump(exclude_unset=True)
-                # )
-                data = None
-                new_model = None
-                if model == 'AP_SUPPLIER':
-                    data = SupplierModel(**binded[0])
-                    new_model = Supplier(
-                        **data.model_dump(exclude_unset=True)
-                    )
-                elif model == 'AR_CUSTOMER':
-                    data = CustomerModel(**binded[0])
-                    new_model = Customer(
-                        **data.model_dump(exclude_unset=True)
-                    )
-                session.add(new_model)
-                session.commit()
-                print(f"Inserted supplier {code} into the database.")
+        lDataSet = ComServer.DBManager.NewDataSet(lSQL)
+        binded = ComServerService.GetResult(lDataSet)
+        print(f"Unimported suppliers: {unimported}")
+        print(f"Binded data: {binded}")
+        
+        # Insert unimported suppliers into the database
+        for rec in binded:
+            data = None
+            new_model = None
+            if model == 'AP_SUPPLIER':
+                data = SupplierModel(**rec)
+                new_model = Supplier(
+                    **data.model_dump(exclude_unset=True)
+                )
+            elif model == 'AR_CUSTOMER':
+                data = CustomerModel(**rec)
+                new_model = Customer(
+                    **data.model_dump(exclude_unset=True)
+                )
+            session.add(new_model)
+            session.commit()
+            print(f"Inserted supplier {rec.get('CODE', None)} into the database.")
         
         # session.commit()
 

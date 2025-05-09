@@ -114,21 +114,50 @@ if selected_year and selected_month:
         st.metric("Total Amount", f"{total_amount:.2f}")
         
         migrate_btn = st.button("Migrate", key="migrate")
+        # if migrate_btn:
+        #     for r in result_df.rows(named=True):
+        #         contra = Contra(**r)
+        #         try:
+        #             contra.post(get_comserver())
+        #             st.write(f"Posted {contra.DOCNO} successfully")
+        #         except Exception as e:
+        #             st.error(f"Error posting {contra.DOCNO}: {e}")
+        #             continue
+        #     max_docno = result_df.select(pl.col("DOCNO")).to_series().max().split("-")[1]
+        #     max_index = int(max_docno) + 1
+        #     setting.contra_index = max_index
+        #     session.commit()
+        #     session.refresh(setting)
+        #     st.success(f"Successfully posted {result_df.shape[0]} records")
+        
         if migrate_btn:
-            for r in result_df.rows(named=True):
+            total_rows = result_df.shape[0]
+            progress_bar = st.progress(0, text="Starting migration...")
+            log_box = st.empty()
+            log_lines = []
+
+            def log(msg):
+                log_lines.append(msg)
+                log_box.code("\n".join(log_lines), language="text", height=200)
+
+            for i, r in enumerate(result_df.rows(named=True), start=1):
                 contra = Contra(**r)
                 try:
                     contra.post(get_comserver())
-                    st.write(f"Posted {contra.DOCNO} successfully")
+                    log(f"[✓] Posted {contra.DOCNO} successfully")
                 except Exception as e:
-                    st.error(f"Error posting {contra.DOCNO}: {e}")
+                    log(f"[✗] Error posting {contra.DOCNO}: {e}")
                     continue
+                progress_bar.progress(i / total_rows, text=f"Posting {contra.DOCNO} ({i}/{total_rows})")
+
             max_docno = result_df.select(pl.col("DOCNO")).to_series().max().split("-")[1]
             max_index = int(max_docno) + 1
             setting.contra_index = max_index
             session.commit()
             session.refresh(setting)
+
+            progress_bar.empty()
             st.success(f"Successfully posted {result_df.shape[0]} records")
-            
+
 
 # endregion

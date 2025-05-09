@@ -2,6 +2,8 @@ import streamlit as st
 import polars as pl
 import fastexcel as fex
 import xlsxwriter
+from typing import Callable
+import time
 
 from database import get_db_session
 from models import Supplier, Customer
@@ -110,18 +112,19 @@ def set_index_max():
     session.refresh(setting)
 
 
-def post_sqlacc():
+def post_sqlacc(progress=None, log: Callable[[str], None] = None):
     from sqlacc import get_comserver
     try:
         ComServer = get_comserver()
         # reigion Post Purchase Invoice
         st.text("Posting Purchase Invoice to SQLAcc")
         pur_grouped: pl.DataFrame = st.session_state.pur_grouped
-        unique_docno = pur_grouped["DocNo"].unique()
+        unique_docno = pur_grouped["DocNo"].unique().sort().to_list()
         
+        total_docs = st.session_state.pur_grouped.shape[0] + st.session_state.sal_grouped.shape[0]
         
         # iterate through each docno and post to sqlacc
-        for docno in unique_docno:
+        for i, docno in enumerate(unique_docno):
             group = pur_grouped.filter(pl.col("DocNo") == docno)
             invoice = PH_PI(
                 DocNo = docno,
@@ -139,24 +142,32 @@ def post_sqlacc():
                     UnitPrice = row["UnitPrice"],
                     Amount = row["Amount"],                
                 )
-                print(detail.model_dump())
+                # print(detail.model_dump())
                 details.append(detail)
             invoice.cdsDocDetail = details
             try:
-                invoice.post(ComServer)
-                st.text(f"Posted {docno} to SQLAcc")
+                # debug, bypass the post to sqlacc
+                # invoice.post(ComServer)
+                time.sleep(1)  # simulate posting time
+                if log:
+                    log(f"Posted {docno} to SQLAcc")
+                else:
+                    st.text(f"Posted {docno} to SQLAcc")
+                if progress:
+                    progress.progress((i + 1) / total_docs, text=f"Posting {docno} to SQLAcc")
             except Exception as e:
                 st.text(f"Error posting {docno} to SQLAcc: {e}")
+            
         # endregion
         
 
         # region: Post Sales Invoice
         st.text("Posting Sales Invoice to SQLAcc")
         sal_grouped: pl.DataFrame = st.session_state.sal_grouped
-        unique_docno = sal_grouped["DocNo"].unique()
+        unique_docno = sal_grouped["DocNo"].unique().sort().to_list()
         
         # iterate through each docno and post to sqlacc
-        for docno in unique_docno:
+        for i, docno in enumerate(unique_docno):
             group = sal_grouped.filter(pl.col("DocNo") == docno)
             invoice = SL_IV(
                 DocNo = docno,
@@ -175,12 +186,19 @@ def post_sqlacc():
                     UnitPrice = row["UnitPrice"],
                     Amount = row["Amount"],                
                 )
-                print(detail.model_dump())
+                # print(detail.model_dump())
                 details.append(detail)
             invoice.cdsDocDetail = details
             try:
-                invoice.post(ComServer)
-                st.text(f"Posted {docno} to SQLAcc")
+                # invoice.post(ComServer)
+                # debug, bypass the post to sqlacc
+                time.sleep(1)  # simulate posting time
+                if log:
+                    log(f"Posted {docno} to SQLAcc")
+                else:
+                    st.text(f"Posted {docno} to SQLAcc")
+                if progress:
+                    progress.progress((i + 1) / total_docs, text=f"Posting {docno} to SQLAcc")
             except Exception as e:
                 st.text(f"Error posting {docno} to SQLAcc: {e}")
             
@@ -283,7 +301,15 @@ if (st.session_state.sal_grouped is not None and st.session_state.pur_grouped is
         st.success("Download completed!")
         
     if post_btn:
-        post_sqlacc()
+        progress = st.progress(0, text="Posting to SQLAcc...")
+        log_box = st.empty()
+        log_lines = []
+
+        def log(msg: str):
+            log_lines.append(msg)
+            log_box.code("\n".join(log_lines), language="text", height=200)
+            
+        post_sqlacc(progress=progress, log=log)
         set_index_max()
         st.success("Posted to SQLAcc!")
 

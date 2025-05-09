@@ -9,7 +9,7 @@ from sqlacc import ComServerService, get_comserver
 
 # --- Streamlit App Setup ---
 # reset session state
-st.session_state.clear()
+# st.session_state.clear()
 st.title("Customer Import")
 
 # --- Functions ---
@@ -154,15 +154,21 @@ elif import_source == "SQLAcc Direct Import":
             st.error(f"Error while comparing: {e}")
         finally:
             session.close()
-
+            
     if st.session_state.unimported_codes is not None:
-        if len(st.session_state.unimported_codes) == 0:
-            st.info("All customer records from SQLAcc are already in the database.")
-        else:
-            st.write(f"Unimported Customer Codes ({len(st.session_state.unimported_codes)}):")
-            st.code("\n".join(st.session_state.unimported_codes))
+        show_codes = st.session_state.unimported_codes
+    else:
+        show_codes = None
+
+    if show_codes is not None:
+        if len(show_codes) > 0:
+            st.write(f"Unimported Customer Codes ({len(show_codes)}):")
+            st.code("\n".join(show_codes))
 
             if st.button("Import From SQLAcc"):
+                # st.write("Button clicked!")  # debugging
                 import_from_sqlacc()
                 st.session_state.df = get_data_db()
                 st.session_state.unimported_codes = None
+        else:
+            st.write("No unimported customer codes found.")

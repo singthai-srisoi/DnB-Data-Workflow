@@ -6,3 +6,5 @@ database.db
 private.pem
 certificate.pem
 *.private.*
+
+user-manual.docx
