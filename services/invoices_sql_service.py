@@ -246,10 +246,10 @@ class SL_IV(BaseModel):
     
     cdsDocDetail: List[SL_IV_Detail] = []
     
-    def set_field(self, lMain, post_date: str = datetime.datetime.now().strftime('%d/%m/%Y')):
+    def set_field(self, lMain): #, post_date: str = datetime.datetime.now().strftime('%d/%m/%Y')):
         lMain.FindField("DocNo").AsString = self.DocNo
         lMain.FindField("DocDate").value = self.DocDate
-        lMain.FindField("PostDate").value = post_date
+        # lMain.FindField("PostDate").value = post_date
         lMain.FindField("Code").AsString = self.Code
         lMain.FindField("Description").AsString = self.Description
         
@@ -305,10 +305,10 @@ class PH_PI(BaseModel):
     
     cdsDocDetail: List[PH_PI_Detail] = []
     
-    def set_field(self, lMain, post_date: str = datetime.datetime.now().strftime('%d/%m/%Y')):
+    def set_field(self, lMain): #, post_date: str = datetime.datetime.now().strftime('%d/%m/%Y')):
         lMain.FindField("DocNo").AsString = self.DocNo
         lMain.FindField("DocDate").value = self.DocDate
-        lMain.FindField("PostDate").value = post_date
+        # lMain.FindField("PostDate").value = post_date
         lMain.FindField("Code").AsString = self.Code.strip()
         lMain.FindField("Description").AsString = self.Description
         

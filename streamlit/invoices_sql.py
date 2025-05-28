@@ -103,10 +103,21 @@ def export_excel():
     return stream.getvalue()
 
 def set_index_max():
-    max_pur = st.session_state.pur_grouped["DocNo"].str.extract(r"(\d+)").cast(pl.Int32).max()
-    max_sal = st.session_state.sal_grouped["DocNo"].str.extract(r"(\d+)").cast(pl.Int32).max()
-    setting.purchase_index = max_pur + 1
-    setting.sales_index = max_sal + 1
+    # if (max_pur := st.session_state.pur_grouped["DocNo"].str.extract(r"(\d+)").cast(pl.Int32).max()) is not None:
+    #     setting.purchase_index = max_pur + 1
+    # if (max_sal := st.session_state.sal_grouped["DocNo"].str.extract(r"(\d+)").cast(pl.Int32).max()) is not None:
+    #     setting.sales_index = max_sal + 1
+    pur_docs = st.session_state.pur_grouped["DocNo"].str.extract(r"(\d+)").cast(pl.Int32)
+    if not pur_docs.is_null().all():
+        max_pur = pur_docs.max()
+        if max_pur is not None:
+            setting.purchase_index = max_pur + 1
+
+    sal_docs = st.session_state.sal_grouped["DocNo"].str.extract(r"(\d+)").cast(pl.Int32)
+    if not sal_docs.is_null().all():
+        max_sal = sal_docs.max()
+        if max_sal is not None:
+            setting.sales_index = max_sal + 1
     session.flush()
     session.commit()
     session.refresh(setting)
