@@ -1,8 +1,10 @@
 /venv
 config.toml
 database.db
+data.db
 
 /__pycache__
+**/__pycache__
 private.pem
 certificate.pem
 *.private.*
